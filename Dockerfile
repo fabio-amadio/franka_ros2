@@ -69,6 +69,7 @@ RUN sudo apt-get update \
         ros-humble-teleop-twist-keyboard \
         ros-humble-joy \
         ros-humble-teleop-twist-joy \
+        ros-humble-rqt-controller-manager \
 
     && sudo apt-get clean \
     && sudo rm -rf /var/lib/apt/lists/*
