@@ -5,17 +5,29 @@
 > **Note:** _franka_ros2_ is not officially supported on Windows.
 
 ## Table of Contents
-- [About](#about)
-- [Caution](#caution)
-- [Setup](#setup)
+- [ROS 2 Integration for Franka Robotics Research Robots](#ros-2-integration-for-franka-robotics-research-robots)
+  - [Table of Contents](#table-of-contents)
+  - [About](#about)
+  - [Caution](#caution)
+  - [Setup](#setup)
+  - [Franka ROS 2 Dependencies Setup](#franka-ros-2-dependencies-setup)
+  - [Prerequisites](#prerequisites)
   - [Local Machine Installation](#local-machine-installation)
   - [Docker Container Installation](#docker-container-installation)
-- [Test the Setup](#test-the-setup)
-- [Troubleshooting](#troubleshooting)
-  - [libfranka: UDP receive: Timeout error](#libfranka-udp-receive-timeout-error)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
+    - [Option A: using Docker Compose](#option-a-using-docker-compose)
+    - [Option B: using Dev Containers in Visual Studio Code](#option-b-using-dev-containers-in-visual-studio-code)
+- [Test the build](#test-the-build)
+  - [Test the Setup](#test-the-setup)
+    - [Run a sample ROS 2 application](#run-a-sample-ros-2-application)
+    - [Run a ROS 2 example controller](#run-a-ros-2-example-controller)
+    - [Run different controllers for different robots](#run-different-controllers-for-different-robots)
+    - [Move the TMRv0.2](#move-the-tmrv02)
+    - [Run Gazebo examples with ROS 2](#run-gazebo-examples-with-ros-2)
+  - [Troubleshooting](#troubleshooting)
+    - [`libfranka: UDP receive: Timeout error`](#libfranka-udp-receive-timeout-error)
+  - [Contributing](#contributing)
+  - [License](#license)
+  - [Contact](#contact)
 
 ## About
 The **franka_ros2** repository provides a **ROS 2** integration of **libfranka**, allowing efficient control of the Franka Robotics arm within the ROS 2 framework. This project is designed to facilitate robotic research and development by providing a robust interface for controlling the research versions of Franka Robotics robots.
@@ -126,7 +138,7 @@ For detailed instructions, on preparing VSCode to use the `.devcontainer` follow
       ```
   5. **Open a shell inside the container:**
       ```bash
-      docker exec -it franka_ros2 /bin/bash
+      docker exec -it franka_ros2_humble /bin/bash
       ```
   6. **Clone the latests dependencies:**
       ```bash
