@@ -71,6 +71,12 @@
             The franka model example controller evaluates and prints the dynamic model ofFranka Robotics Robots.
         </description>
     </class>
+    <class name="franka_example_controllers/ExerciseCartesianImpedanceController"
+           type="franka_example_controllers::ExerciseCartesianImpedanceController" base_class_type="controller_interface::ControllerInterface">
+        <description>
+            The exercise cartesian impedance controller follows a filtered pose target while applying a null-space posture task.
+        </description>
+    </class>
     <class name="franka_example_controllers/GripperExampleController"
            type="franka_example_controllers::GripperExampleController" base_class_type="controller_interface::ControllerInterface">
         <description>

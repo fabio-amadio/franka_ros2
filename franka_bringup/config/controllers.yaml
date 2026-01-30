@@ -49,6 +49,9 @@
       cartesian_velocity_example_controller:
         type: franka_example_controllers/CartesianVelocityExampleController
 
+      exercise_cartesian_impedance_controller:
+        type: franka_example_controllers/ExerciseCartesianImpedanceController
+
       elbow_example_controller:
         type: franka_example_controllers/ElbowExampleController
 
@@ -106,6 +109,11 @@
   cartesian_velocity_example_controller:
     ros__parameters:
       robot_type: "fr3"   
+
+/**:
+  exercise_cartesian_impedance_controller:
+    ros__parameters:
+      robot_type: "fr3"
 
 /**:
   elbow_example_controller:

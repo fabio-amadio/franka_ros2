@@ -17,6 +17,7 @@ option(CHECK_TIDY "Adds clang-tidy tests" OFF)
 find_package(ament_cmake REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(controller_interface REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(franka_msgs REQUIRED)
 find_package(franka_semantic_components REQUIRED)
 find_package(hardware_interface REQUIRED)
@@ -38,6 +39,7 @@ add_library(
         src/cartesian_pose_example_controller.cpp
         src/cartesian_velocity_example_controller.cpp
         src/elbow_example_controller.cpp
+        src/exercise_cartesian_impedance_controller.cpp
         src/gravity_compensation_example_controller.cpp
         src/gripper_example_controller.cpp
         src/joint_impedance_example_controller.cpp
@@ -57,6 +59,7 @@ target_include_directories(
 ament_target_dependencies(
         ${PROJECT_NAME}
         controller_interface
+        geometry_msgs
         franka_msgs
         franka_semantic_components
         hardware_interface
