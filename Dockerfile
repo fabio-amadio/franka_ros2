@@ -30,6 +30,7 @@ RUN apt-get update && \
 # Setup user configuration
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && chsh -s /bin/bash $USERNAME \
     && echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && echo "source /opt/ros/$ROS_DISTRO/setup.bash" >> /home/$USERNAME/.bashrc \
     && echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> /home/$USERNAME/.bashrc
@@ -70,6 +71,7 @@ RUN sudo apt-get update \
         ros-humble-joy \
         ros-humble-teleop-twist-joy \
         ros-humble-rqt-controller-manager \
+        terminator \
 
     && sudo apt-get clean \
     && sudo rm -rf /var/lib/apt/lists/*
@@ -95,5 +97,5 @@ RUN sudo chmod +x /franka_entrypoint.sh
 # Set the default shell to bash and the workdir to the source directory
 SHELL [ "/bin/bash", "-c" ]
 ENTRYPOINT [ "/franka_entrypoint.sh" ]
-CMD [ "/bin/bash" ]
+CMD [ "terminator", "-e", "bash" ]
 WORKDIR /ros2_ws

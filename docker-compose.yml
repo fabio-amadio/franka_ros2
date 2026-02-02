@@ -9,7 +9,7 @@ services:
     container_name: franka_ros2_humble
     network_mode: "host"
     privileged: true
-    command: /bin/bash
+    command: ["terminator", "-e", "bash -l"]
     tty: true
     stdin_open: true
     volumes:
