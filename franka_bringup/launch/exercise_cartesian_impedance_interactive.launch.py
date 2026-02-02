@@ -49,7 +49,12 @@ def generate_robot_nodes(context):
             ),
             launch_arguments={
                 'robot_config_file': robot_config_file,
-                'controller_name': 'exercise_cartesian_impedance_controller',
+                'controller_names': 'exercise_cartesian_impedance_controller',
+                'rviz_config_file': PathJoinSubstitution([
+                    FindPackageShare('franka_bringup'),
+                    'rviz',
+                    'visualize_franka_with_interactive_marker.rviz',
+                ]),
             }.items(),
         )
     )

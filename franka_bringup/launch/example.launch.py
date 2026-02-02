@@ -85,6 +85,7 @@ load_yaml = launch_utils.load_yaml
 def generate_robot_nodes(context):
     config_file = LaunchConfiguration('robot_config_file').perform(context)
     controller_names = LaunchConfiguration('controller_names').perform(context)
+    rviz_config_file = LaunchConfiguration('rviz_config_file').perform(context)
     controller_names_vector = controller_names.split(',')
     configs = load_yaml(config_file)
     nodes = []
@@ -165,13 +166,7 @@ def generate_robot_nodes(context):
                 name='rviz2',
                 arguments=[
                     '--display-config',
-                    PathJoinSubstitution(
-                        [
-                            FindPackageShare('franka_description'),
-                            'rviz',
-                            'visualize_franka.rviz',
-                        ]
-                    ),
+                    rviz_config_file,
                 ],
                 output='screen',
             )
@@ -195,6 +190,17 @@ def generate_launch_description():
                     [FindPackageShare('franka_bringup'), 'config', 'franka.config.yaml']
                 ),
                 description='Path to the robot configuration file to load',
+            ),
+            DeclareLaunchArgument(
+                'rviz_config_file',
+                default_value=PathJoinSubstitution(
+                    [
+                        FindPackageShare('franka_description'),
+                        'rviz',
+                        'visualize_franka.rviz',
+                    ]
+                ),
+                description='Path to the RViz display configuration file',
             ),
             OpaqueFunction(function=generate_robot_nodes),
         ]
