@@ -60,12 +60,12 @@ class ExerciseCartesianImpedanceController : public controller_interface::Contro
   Matrix7d ns_damp_;
   
   // translation stiffness (cartesian task)
-  std::vector<double> pos_stiff_{1500.0, 1500.0, 1500.0};  // axes x, y, z
+  std::vector<double> pos_stiff_{800.0, 800.0, 800.0};  // axes x, y, z
   // roation stiffness (cartesian task)
-  std::vector<double> rot_stiff_{100.0, 100.0, 100.0};  // axes x, y, z
+  std::vector<double> rot_stiff_{60.0, 60.0, 60.0};  // axes x, y, z
   // joint stiffness (null-space)
   std::vector<double> ns_joint_stiff_{5.0, 5.0, 5.0, 5.0, 0.1, 0.1, 0.1}; // joints q1, ... q7
-  double filter_param_{0.05};
+  double filter_param_{0.008};
 
   // Desired pose subscriber
   void equilibriumPoseCallback(const geometry_msgs::msg::PoseStamped& msg);

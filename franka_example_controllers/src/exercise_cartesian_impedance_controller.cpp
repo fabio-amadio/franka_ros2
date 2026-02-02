@@ -91,12 +91,12 @@ controller_interface::return_type ExerciseCartesianImpedanceController::update(
 
   /* TODO: Compute the null-space torques  ------------------------------------------------------------ */
 
-  // Compute the Jacobian pseudoinverse
-  Eigen::MatrixXd jacobian_pinv;
-  pseudoInverse(jacobian, jacobian_pinv, 0.2);
-  // Null-space control torques
-  tau_nullspace << (Eigen::MatrixXd::Identity(7, 7) - jacobian_pinv * jacobian) *
-                   (ns_stiff_ * (q_d_nullspace_ - q) - ns_damp_ * dq);
+  // // Compute the Jacobian pseudoinverse
+  // Eigen::MatrixXd jacobian_pinv;
+  // pseudoInverse(jacobian, jacobian_pinv, 0.2);
+  // // Null-space control torques
+  // tau_nullspace << (Eigen::MatrixXd::Identity(7, 7) - jacobian_pinv * jacobian) *
+  //                  (ns_stiff_ * (q_d_nullspace_ - q) - ns_damp_ * dq);
   
   /* TODO: Filter the reference pose  ----------------------------------------------------------------- */
 
