@@ -64,7 +64,7 @@ def generate_robot_nodes(context):
     for _, config in configs.items():
         namespace = config['namespace']
         robot_type = config['robot_type']
-        base_link = f'{robot_type}_link0'
+        base_link = 'base'
         ee_link = f'{robot_type}_hand_tcp'
 
         additional_nodes.append(

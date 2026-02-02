@@ -19,8 +19,8 @@ class EndEffectorMarkerNode(Node):
 
         # Declare parameters and get their values
         self.declare_parameter('topic_name', '/cartesian_impedance/desired_pose')
-        self.declare_parameter('base_link', 'panda_link0')
-        self.declare_parameter('ee_link', 'panda_hand_tcp')
+        self.declare_parameter('base_link', 'base')
+        self.declare_parameter('ee_link', 'fr3_hand_tcp')
         self.declare_parameter('transition_event_topic', 'custom_cartesian_impedance_controller/transition_event')
 
         self.topic_name = self.get_parameter('topic_name').get_parameter_value().string_value
