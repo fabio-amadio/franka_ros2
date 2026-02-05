@@ -20,6 +20,7 @@
   - [Test the Setup](#test-the-setup)
     - [Run a sample ROS 2 application](#run-a-sample-ros-2-application)
     - [Run a ROS 2 example controller](#run-a-ros-2-example-controller)
+    - [Run the Cartesian Impedance Controller](#run-the-cartesian-impedance-controller)
     - [Run different controllers for different robots](#run-different-controllers-for-different-robots)
     - [Move the TMRv0.2](#move-the-tmrv02)
     - [Run Gazebo examples with ROS 2](#run-gazebo-examples-with-ros-2)
