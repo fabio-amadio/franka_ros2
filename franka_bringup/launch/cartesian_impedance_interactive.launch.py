@@ -1,4 +1,5 @@
 #  Copyright (c) 2026 Franka Robotics GmbH
+#  Copyright (c) 2026 Fabio Amadio
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -49,7 +50,7 @@ def generate_robot_nodes(context):
             ),
             launch_arguments={
                 'robot_config_file': robot_config_file,
-                'controller_names': 'exercise_cartesian_impedance_controller',
+                'controller_names': 'cartesian_impedance_controller',
                 'rviz_config_file': PathJoinSubstitution([
                     FindPackageShare('franka_bringup'),
                     'rviz',
@@ -69,15 +70,34 @@ def generate_robot_nodes(context):
 
         additional_nodes.append(
             Node(
-                package='franka_simple_publishers',
-                executable='simple_interactive_marker_pose_publisher',
+                package='franka_tools',
+                executable='interactive_marker_pose_publisher_gripper',
                 namespace=namespace,
                 output='screen',
                 parameters=[
-                    {'topic_name': '/cartesian_impedance/desired_pose'},
+                    {'des_pose_topic_name': '/cartesian_impedance/desired_pose'},
+                    {'curr_pose_topic_name': '/cartesian_impedance/current_pose'},
                     {'base_link': base_link},
                     {'ee_link': ee_link},
-                    {'transition_event_topic': 'exercise_cartesian_impedance_controller/transition_event'},
+                ],
+            )
+        )
+        additional_nodes.append(
+            Node(
+                package='franka_tools',
+                executable='collision_behavior_setter',
+                name='collision_behavior_setter',
+                namespace=namespace,
+                output='screen',
+                arguments=[
+                    '--T_lb',
+                    '100.0',
+                    '--T_ub',
+                    '100.0',
+                    '--F_lb',
+                    '100.0',
+                    '--F_ub',
+                    '100.0',
                 ],
             )
         )

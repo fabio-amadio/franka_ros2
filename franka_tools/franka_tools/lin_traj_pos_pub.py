@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026 Fabio Amadio
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
@@ -8,7 +21,7 @@ from scipy.spatial.transform import Rotation as R
 from scipy.spatial.transform import Slerp
 
 
-class ExercisePosePub(Node):
+class LinearTrajPosePub(Node):
     def __init__(self):
         super().__init__("exercise_pose_pub")
 
@@ -22,14 +35,14 @@ class ExercisePosePub(Node):
             PoseStamped,
             "/cartesian_impedance/current_pose",
             self.current_pose_cb,
-            10
+            1
         )
 
-        ''' --- TODO: Declare, load and process the "goal" parameter --- '''
+        ''' --- Declare, load and process the "goal" parameter --- '''
 
         # Parameter: goal = [T, x, y, z, qx, qy, qz, qw]
         self.declare_parameter(
-            "goal", [5.0, 0.3, 0.0, 0.5, 1.0, 0.0, 0.0, 0.0]
+            "goal", [10.0, 0.3, 0.0, 0.5, 1.0, 0.0, 0.0, 0.0]
         )
         goal = np.array(self.get_parameter("goal").value)
 
@@ -100,7 +113,7 @@ class ExercisePosePub(Node):
         # Trajectory time index cannot be higher than total time
         self.t = min(self.t, self.T)
 
-        ''' ----- TODO: Compute interpolated pose at each time step --- '''
+        ''' ----- Compute interpolated pose at each time step --- '''
 
         # Position: linear interpolation
         alpha = self.t / self.T
@@ -140,7 +153,7 @@ class ExercisePosePub(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = ExercisePosePub()
+    node = LinearTrajPosePub()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:

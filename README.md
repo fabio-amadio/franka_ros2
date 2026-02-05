@@ -211,6 +211,16 @@ ros2 launch franka_bringup example.launch.py controller_name:=your_desired_contr
 ```
 You can select one of the controllers from `controllers.yaml`.
 
+### Run the Cartesian Impedance Controller
+
+Use the dedicated interactive launch file:
+
+```bash
+ros2 launch franka_bringup cartesian_impedance_interactive.launch.py robot_ip:=172.16.0.X
+```
+
+In RViz, move the interactive marker to set the target pose and enable goal publishing from the marker menu by checking `Send goals`.
+
 ### Run different controllers for different robots
 
 If you want to run a specific controller for each robot, you must specify the controllers you want to run as follows (example for three robots):

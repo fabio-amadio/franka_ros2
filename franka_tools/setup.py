@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'franka_simple_publishers'
+package_name = 'franka_tools'
 
 setup(
     name=package_name,
@@ -25,13 +25,15 @@ setup(
     zip_safe=True,
     maintainer='Fabio Amadio',
     maintainer_email='fabioamadio93@gmail.com',
-    description='A ROS 2 package with simple reference publishers for the Franka robot',
+    description='A collection of small ROS 2 tools and helper nodes for Franka robots (pose publishing, interactive markers, and utilities).',
     license='Apache License 2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'simple_interactive_marker_pose_publisher = franka_simple_publishers.simple_interactive_marker_pose_publisher:main',
-            'exercise_pose_publisher = franka_simple_publishers.exercise_pose_publisher:main',
+            'interactive_marker_pose_publisher = franka_tools.interactive_marker_pose_publisher:main',
+            'interactive_marker_pose_publisher_gripper = franka_tools.interactive_marker_pose_publisher_gripper:main',
+            'lin_traj_pos_pub = franka_tools.lin_traj_pos_pub:main',
+            'collision_behavior_setter = franka_tools.collision_behavior_setter:main',
         ],
     },
 )

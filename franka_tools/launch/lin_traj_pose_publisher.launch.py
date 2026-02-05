@@ -16,9 +16,9 @@ def generate_launch_description():
         goal_arg,
 
         Node(
-            package="franka_simple_publishers",
-            executable="exercise_pose_publisher",
-            name="exercise_pose_publisher",
+            package="franka_tools",
+            executable="lin_traj_pos_pub",
+            name="lin_traj_pos_pub",
             output="screen",
             parameters=[
                 {

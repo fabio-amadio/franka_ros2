@@ -1,5 +1,18 @@
+# Copyright (c) 2026 Fabio Amadio
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import rclpy
-from rclpy.action import ActionClient
 from rclpy.node import Node
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.callback_groups import ReentrantCallbackGroup
@@ -8,27 +21,26 @@ from visualization_msgs.msg import InteractiveMarker, InteractiveMarkerControl, 
 from interactive_markers.interactive_marker_server import InteractiveMarkerServer
 from interactive_markers.menu_handler import MenuHandler
 from geometry_msgs.msg import PoseStamped
-from lifecycle_msgs.msg import TransitionEvent
 
 from tf2_ros import TransformListener, Buffer, LookupException, TimeoutException
-
+import time
 
 class EndEffectorMarkerNode(Node):
     def __init__(self):
         super().__init__('ee_interactive_marker_node')
 
         # Declare parameters and get their values
-        self.declare_parameter('topic_name', '/cartesian_impedance/desired_pose')
+        self.declare_parameter('des_pose_topic_name', '/cartesian_impedance/desired_pose')
         self.declare_parameter('base_link', 'base')
         self.declare_parameter('ee_link', 'fr3_hand_tcp')
-        self.declare_parameter('transition_event_topic', 'custom_cartesian_impedance_controller/transition_event')
+        self.declare_parameter('curr_pose_topic_name', '/cartesian_impedance/current_pose')
 
-        self.topic_name = self.get_parameter('topic_name').get_parameter_value().string_value
+        self.des_pose_topic_name = self.get_parameter('des_pose_topic_name').get_parameter_value().string_value
         self.base_link = self.get_parameter('base_link').get_parameter_value().string_value
         self.ee_link = self.get_parameter('ee_link').get_parameter_value().string_value
-        self.transition_event_topic = self.get_parameter('transition_event_topic').get_parameter_value().string_value
+        self.curr_pose_topic_name = self.get_parameter('curr_pose_topic_name').get_parameter_value().string_value
 
-        self.get_logger().info(f"Publishing to topic: {self.topic_name}")
+        self.get_logger().info(f"Publishing to topic: {self.des_pose_topic_name}")
         self.get_logger().info(f"Base link: {self.base_link}, EE link: {self.ee_link}")
 
         # Callback group for concurrent handling
@@ -36,31 +48,33 @@ class EndEffectorMarkerNode(Node):
 
         # Publisher
         self.pose_pub = self.create_publisher(
-            PoseStamped, self.topic_name, 1, callback_group=self.callback_group
+            PoseStamped, self.des_pose_topic_name, 1, callback_group=self.callback_group
         )
 
         # TF buffer and listener
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self, spin_thread=True)
+        time.sleep(1)
 
         # Interactive marker server
         self.server = InteractiveMarkerServer(self, 'ee_marker_server')
 
         self.enabled = False
+        self.initialized = False
 
         self.menu = MenuHandler()
         self.reinit_entry = self.menu.insert("Reset", callback=self.handle_menu_feedback)
         self.checkbox_handle = self.menu.insert("Send goals", callback=self.on_menu_toggle)
         self.menu.setCheckState(self.checkbox_handle, MenuHandler.UNCHECKED)
 
-        self.ctrl_transition_sub = self.create_subscription(
-            TransitionEvent, self.transition_event_topic, self.transition_event_cb, 1,
+        self.curr_pose_sub = self.create_subscription(
+            PoseStamped, self.curr_pose_topic_name, self.curr_pose_cb, 1,
         )
 
-    def transition_event_cb(self, msg):
-        self.get_logger().info(msg.goal_state.label)
-        if msg.goal_state.label == 'active':
-            self.try_initialize_marker()
+    def curr_pose_cb(self, msg):
+        if not self.initialized:
+            self.get_logger().info('Initializing')
+            self.initialized = self.try_initialize_marker()
                        
     def try_initialize_marker(self):
         try:
@@ -69,8 +83,11 @@ class EndEffectorMarkerNode(Node):
             )
             self.get_logger().info('TF transform acquired, initializing marker')
             self.create_interactive_marker(tf)
+            return True
         except (LookupException, TimeoutException):
             self.get_logger().warn(f'Waiting for TF from {self.base_link} to {self.ee_link}...')
+            time.sleep(1)
+            return False
 
     def try_reinitialize_marker(self):
         try:

@@ -39,7 +39,7 @@ add_library(
         src/cartesian_pose_example_controller.cpp
         src/cartesian_velocity_example_controller.cpp
         src/elbow_example_controller.cpp
-        src/exercise_cartesian_impedance_controller.cpp
+        src/cartesian_impedance_controller.cpp
         src/gravity_compensation_example_controller.cpp
         src/gripper_example_controller.cpp
         src/joint_impedance_example_controller.cpp

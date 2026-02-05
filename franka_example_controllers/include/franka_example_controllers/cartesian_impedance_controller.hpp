@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -11,9 +12,14 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <geometry_msgs/msg/wrench_stamped.hpp>
+#include "franka_semantic_components/franka_cartesian_pose_interface.hpp"
 #include "franka_semantic_components/franka_robot_model.hpp"
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
+
+namespace franka {
+struct RobotState;
+}
 
 namespace franka_example_controllers {
 using Eigen::Matrix3d;
@@ -28,7 +34,7 @@ using Vector7d = Eigen::Matrix<double, 7, 1>;
 using Eigen::Quaterniond;
 
 
-class ExerciseCartesianImpedanceController : public controller_interface::ControllerInterface {
+class CartesianImpedanceController : public controller_interface::ControllerInterface {
  public:
   controller_interface::InterfaceConfiguration command_interface_configuration() const override;
   controller_interface::InterfaceConfiguration state_interface_configuration() const override;
@@ -42,6 +48,7 @@ class ExerciseCartesianImpedanceController : public controller_interface::Contro
  private:
   const int num_joints_ = 7;
 
+  std::unique_ptr<franka_semantic_components::FrankaCartesianPoseInterface> franka_cartesian_pose_;
   std::unique_ptr<franka_semantic_components::FrankaRobotModel> franka_robot_model_;
   Quaterniond orientation_d_;
   Quaterniond orientation_d_target_;
@@ -53,6 +60,8 @@ class ExerciseCartesianImpedanceController : public controller_interface::Contro
   std::string robot_type_;
   const std::string k_robot_state_interface_name{"robot_state"};
   const std::string k_robot_model_interface_name{"robot_model"};
+  const bool k_elbow_activated_{false};
+  franka::RobotState* robot_state_{nullptr};
   size_t model_state_interface_count_{0};
   Matrix6d task_stiff_;
   Matrix6d task_damp_;
@@ -62,10 +71,12 @@ class ExerciseCartesianImpedanceController : public controller_interface::Contro
   // translation stiffness (cartesian task)
   std::vector<double> pos_stiff_{800.0, 800.0, 800.0};  // axes x, y, z
   // roation stiffness (cartesian task)
-  std::vector<double> rot_stiff_{60.0, 60.0, 60.0};  // axes x, y, z
+  std::vector<double> rot_stiff_{50.0, 50.0, 50.0};  // axes x, y, z
   // joint stiffness (null-space)
-  std::vector<double> ns_joint_stiff_{5.0, 5.0, 5.0, 5.0, 0.1, 0.1, 0.1}; // joints q1, ... q7
-  double filter_param_{0.008};
+  std::vector<double> ns_joint_stiff_{2.0, 2.0, 2.0, 2.0, 0.001, 0.001, 0.001}; // joints q1, ... q7
+  const std::vector<double> max_error_{0.05, 0.05, 0.05, 0.2, 0.2, 0.2};
+  const double max_ns_torque_{5.0};
+  double filter_param_{0.005};
 
   // Desired pose subscriber
   void equilibriumPoseCallback(const geometry_msgs::msg::PoseStamped& msg);
@@ -80,7 +91,13 @@ class ExerciseCartesianImpedanceController : public controller_interface::Contro
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr current_pose_pub_;
   rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr filt_ref_pose_pub_;
 
+  std::mutex data_mutex_;
+
   void updateJointStates(Vector7d& q, Vector7d& dq) const;
+  void updateRobotStatePointer();
+  Vector7d saturateTorqueRate(const Vector7d& tau_d_calculated, const Vector7d& tau_J_d) const;
+
+  const double delta_tau_max_{1.0};
 };
 
 }  // namespace franka_example_controllers
